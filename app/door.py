@@ -20,8 +20,8 @@ class Door:
             self.time = time
         except:
             print("ERROR: Door status update failed")
-            return {"state": -1, "info": "ERROR", "time": "ERROR"}
-        return {"state": self.state, "info": self.info, "time": self.time}
+            return {"update": "failed"}
+        return {"update": "success"}
 
     def getState(self):
         time.unix_time()
