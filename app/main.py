@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Body, Depends, HTTPException, status, Request
-from app.auth.auth_bearer import JWTBearer
+from fastapi import FastAPI, Depends, HTTPException, Request
+#from app.auth.auth_bearer import JWTBearer
 from fastapi.security.api_key import APIKey
 import auth
 from decouple import config

@@ -29,6 +29,20 @@ class Door:
     def getStatus(self):
         print("Getting door status")
         # TODO time.unix_time()
-        if time.time_ns() - int(self.time_unix) > 300:
-            return {"state": -1, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé", "time": self.time}
+        pythonEpochTime = getEpochTime
+        if pythonEpochTime - removeOffsetEpochTime(int(self.time_unix)) > 300000: # 5 minutes = 300000 ms
+            print("python epoch time: " + str(pythonEpochTime))
+            print("door epoch time: " + self.time_unix)
+            print("difference too big: " + str(getEpochTime - int(self.time_unix)), " > 300000ms (5min)")
+            print("door status = 2")
+            return {"state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé", "time": self.time}
+        print("door status = " + str(self.state) + ", info = " + self.info + ", time = " + self.time)
         return {"state": self.state, "info": self.info, "time": self.time}
+
+def getEpochTime() -> int:
+    epochTime = int(time.time())
+    return epochTime
+
+def removeOffsetEpochTime(epochTime: int) -> int:
+    offset = 3600 # 1 hour, Brussels time (CET)
+    return epochTime - offset
