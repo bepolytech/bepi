@@ -125,7 +125,7 @@ async def read_door(request: Request) -> dict:
 @limiter.limit("300/minute") # 300 requests per minute = 5 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 #def post_door(request: Request, api_key: APIKey = Depends(auth.get_api_key), state: int = 2, info: str = "No info", time: str = "No time", time_unix: int = 1) -> dict:
-def post_local(request: Request, door_state: int = 2, info: str = "No info", update_time: str = "No time", update_time_unix: int = 1, temperature: int = 10, humidity: int = 0) -> dict:
+def update_local(request: Request, door_state: int = 2, info: str = "No info", update_time: str = "No time", update_time_unix: int = 1, temperature: int = 10, humidity: int = 0) -> dict:
     ###credentials_exception = HTTPException(
     ###    status_code=status.HTTP_401_UNAUTHORIZED,
     ###    detail="Could not validate credentials",
