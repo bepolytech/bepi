@@ -8,7 +8,11 @@ services:
     restart: unless-stopped
     env_file:
       - ./app/.env
-    #volumes:
-    #  - ./data:/data
+    #environment:
+    #  - API_KEY=
+    #  - UTC_OFFSET= # in seconds, ex: 3600 = UTC+1
+    #  - MAX_TIME= # max time before the status is considered unknown, in ms, ex: 300000 = 5 minutes
+    ###volumes:
+    ###  - ./data:/data
     ports:
       - 8000:80
