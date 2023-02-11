@@ -20,14 +20,8 @@ class Local(BaseModel):
 
     # instace attributes
     def __init__(self, id:int) -> None:
+        # NEEDS to call the super (BaseModel) __init__() from Pydantic to work
         super().__init__(id=id, temperature=0, humidity=0, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=1, info="No info")
-        #self.id: int = id
-        #self.temperature: int = 0
-        #self.humidity: int = 0
-        #self.doorState: int = 2 # 0 = closed, 1 = open, 2 = unknown 
-        #self.doorUpdateTime: str = "Unknown"
-        #self.doorUpdateTimeUnix: int = 1
-        #self.info: str = "No info"
 
     def updateDoorStatus(self, doorState: int = 2):
         print("Updating door status")
@@ -73,10 +67,10 @@ class Local(BaseModel):
         print("Getting local status")
         pythonEpochTime = getEpochTime()
         # 5 minutes = 300000 ms
-        if pythonEpochTime - removeOffsetEpochTime(int(self.doorUpdateTimeUnix)) > 300000:
+        if pythonEpochTime - removeOffsetEpochTime(int(self.doorUpdateTimeUnix)) > MAX_TIME:
             print("python epoch time: " + str(pythonEpochTime))
             print("door epoch time: " + str(self.doorUpdateTimeUnix))
-            print("difference too big: " + str(getEpochTime() - int(self.doorUpdateTimeUnix)), " > 300000ms (5min)")
+            print("difference too big: " + str(getEpochTime() - int(self.doorUpdateTimeUnix)), " > " + str(MAX_TIME) + " ms (" + str(MAX_TIME/60000) + " min)")
             print("door status = 2")
             return {"door_state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé.", "update_time": str(self.getUpdateTime()), "temperature": str(self.getTemperature()), "humidity": str(self.getHumidity())}
         print("door status = " + str(self.getDoorState()) + ", info = " + self.getInfo() + ", time = " + self.getUpdateTime())
@@ -96,14 +90,10 @@ class Local(BaseModel):
 
     def getTemperature(self) -> int:
         print("Getting temperature")
-        #if self.temperature < 10 | self.temperature > 35:
-        #    return "Error°C"
         return self.temperature
 
     def getHumidity(self) -> int:
         print("Getting humidity")
-        #if self.humidity < 0 | self.humidity > 100:
-        #    return "Error%"
         if self.humidity < 0:
             print("Humidity < 0 ???")
             return 0
