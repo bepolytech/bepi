@@ -24,7 +24,7 @@ class ApiAuth:
             print("Could not validate API KEY")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate API KEY"
+                detail="Could not validate API KEY, unauthorized."
             )
 
 

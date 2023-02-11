@@ -201,12 +201,12 @@ def update_local(request: Request, door_state: int = 2, info: str = "No info", u
         local.updateInfo(info)
         local.updateTempandHum(temperature, humidity)
         print("Local update PUT request successfully processed")
-        res = {"update": "success"}
+        res = {"api_key": "correct", "auth": "yes", "update": "success"}
         print("Sending response:")
         print(res)
         return res
     print("Local update PUT request process failed")
-    res = {"update": "failed"}
+    res = {"api_key": "incorrect", "auth": "not", "update": "failed"}
     print("Sending response:")
     print(res)
     return res

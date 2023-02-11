@@ -1,27 +1,33 @@
 import requests
 from decouple import config
 
-api_key = config("API_KEY")
+
+
+localhost8000uvicorn = "http://127.0.0.1:8000"
+URL = str(config("TEST_API_URL", default=localhost8000uvicorn))
+
+
+api_key = config("TEST_API_KEY")
 
 auth_headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer {api_key}'
+    'api_token': api_key
 }
 
 print("### -- TESTING API -- ###")
 print("get root:")
-print(requests.get("http://localhost:8000/").json())
+print(requests.get(URL).json())
 print("get bep:")
-print(requests.get("http://localhost:8000/bep/").json())
+print(requests.get(URL+"/bep/").json())
 print("get door:")
-print(requests.get("http://localhost:8000/door/").json())
+print(requests.get(URL+"/door/").json())
 print("get local:")
-print(requests.get("http://localhost:8000/local/").json())
+print(requests.get(URL+"/local/").json())
 
-print("POST local with api_key:")
+print("PUT local with api_key:")
 print(
-    requests.post(
-        "http://localhost:8000/local/",
+    requests.put(
+        URL+"/local/",
         json={
             "door_state": 1,
             "info": "testing api with api key",
@@ -35,14 +41,14 @@ print(
 )
 
 print("get local:")
-print(requests.get("http://localhost:8000/local/").json())
+print(requests.get(URL+"/local/").json())
 print("get door:")
-print(requests.get("http://localhost:8000/door/").json())
+print(requests.get(URL+"/door/").json())
 
-print("POST local without api_key:")
+print("PUT local without api_key:")
 print(
-    requests.post(
-        "http://localhost:8000/local/",
+    requests.put(
+        URL+"/local/",
         json={
             "door_state": 0,
             "info": "testing api",
@@ -55,9 +61,14 @@ print(
 )
 
 print("get local:")
-print(requests.get("http://localhost:8000/local/").json())
+print(requests.get(URL+"/local/").json())
 print("get door:")
-print(requests.get("http://localhost:8000/door/").json())
+print(requests.get(URL+"/door/").json())
+
+print("get temp:")
+print(requests.get(URL+"/temp/").json())
+print("post test:")
+print(requests.post(URL+"/test/").json())
 
 print("## -- END TESTING API -- ##")
 
