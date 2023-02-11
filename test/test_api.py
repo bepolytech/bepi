@@ -1,13 +1,15 @@
 import requests
 from decouple import config
 
-
+######
 
 localhost8000uvicorn = "http://127.0.0.1:8000"
-URL = str(config("TEST_API_URL", default=localhost8000uvicorn))
+URL: str = str(config("TEST_API_URL", default=localhost8000uvicorn))
 
+defaultapikey = "thisisanapikey"
+api_key: str = str(config("TEST_API_KEY", default=defaultapikey))
 
-api_key = config("TEST_API_KEY")
+######
 
 auth_headers = {
     'Content-Type': 'application/json',
