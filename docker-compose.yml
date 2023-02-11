@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  bep-api:
+    #build: .
+    image: bepolytech/bepi:latest
+    container_name: bep-api
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    ports:
+      - 8000:8000

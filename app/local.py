@@ -1,26 +1,31 @@
 import time
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from decouple import config
 
 MAX_TIME: int = int(config("MAX_TIME", cast=int, default=300000)) # 5 minutes = 300000 ms
 
 # uses Pydantic's BaseModel
 class Local(BaseModel):
+    """Local class, used to store local's data such as door state, info, temperature, humidity, etc."""
 
-    temperature: int = 0
-    humidity: int = 0
-    doorState: int = 2  # 0 = closed, 1 = open, 2 = unknown
-    doorUpdateTime: str = "Unknown"
-    doorUpdateTimeUnix: int = 1
-    info: str = "No info"
+    # class attributes
+    id: int = Field(description="Local id, used if there are multiple locals")
+    temperature: int = Field(description="Temperature in Celcius")
+    humidity: int = Field(description="Humidity in %")
+    doorState: int = Field(description="Door state, 0=closed, 1=open, 2=unknown")  # 0 = closed, 1 = open, 2 = unknown
+    doorUpdateTime: str = Field(description="Door update time, human readable")
+    doorUpdateTimeUnix: int = Field(description="Door update time, unix/epoch")
+    info: str = Field(description="Info about the local or door")
 
-    #def __init__(self):
-    #    self.temperature: int = 0
-    #    self.humidity: int = 0
-    #    self.doorState: int = 2 # 0 = closed, 1 = open, 2 = unknown 
-    #    self.doorUpdateTime: str = "Unknown"
-    #    self.doorUpdateTimeUnix: int = 1
-    #    self.info: str = "No info"
+    # instace attributes
+    def __init__(self, id:int):
+        self.id: int = id
+        self.temperature: int = 0
+        self.humidity: int = 0
+        self.doorState: int = 2 # 0 = closed, 1 = open, 2 = unknown 
+        self.doorUpdateTime: str = "Unknown"
+        self.doorUpdateTimeUnix: int = 1
+        self.info: str = "No info"
 
     def updateDoorStatus(self, doorState: int = 2):
         print("Updating door status")

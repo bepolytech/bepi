@@ -9,20 +9,31 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import re
 
-from door import Door
+#! deprecated
+#from door import Door
+
 from local import Local
 
 limiter = Limiter(key_func=get_remote_address, headers_enabled=True, default_limits=[
                   "300/minute"])  # 300 requests per minute = 5 requests per second
-app = FastAPI()
+app = FastAPI(
+    title="BEP API - BEPI",
+    description="API for the BEP - Bureau Étudiant de Polytechnique",
+    version="0.1.1",
+)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+#! deprecated
 # -- initialize door state -- #
 #door = Door()
 
-# -- initialize Local -- #
-local = Local()
+# -- initialize Local(s) -- #
+local = Local(1) # id = 1
+#if we want to add more locals, we would could another instance with another id to differentiate them, like this:
+#local2 = Local(2) # id = 2
+#we could then make a list of BEP's locals, if needed:
+#locals = [local1, local2]
 
 @app.get("/", tags=["root"])
 @limiter.limit("120/minute") # 120 requests per minute = 2 requests per second
