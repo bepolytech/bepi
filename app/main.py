@@ -32,7 +32,7 @@ You can **`GET door`**'s data:
 * **Door state**
 * **Door update time**
 
-> **Note:** **`POST door`** requires a private API key, reserved for BEP.
+> **Note:** **`PUT local`** requires a private API key, reserved for BEP.
 """
 
 tags_metadata = [
@@ -151,14 +151,14 @@ def post_local(request: Request, door_state: int = 2, info: str = "No info", upd
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("POST request at /local/ from " + str(origin_ip))
+    print("PUT request at /local/ from " + str(origin_ip))
     if local.updateDoorStateTime(update_time, update_time_unix):
         local.updateDoorStatus(door_state)
         local.updateInfo(info)
         local.updateTempandHum(temperature, humidity)
-        print("Local update POST request successfully processed")
+        print("Local update PUT request successfully processed")
         return {"update": "success"}
-    print("Local update POST request process failed")
+    print("Local update PUT request process failed")
     return {"update": "failed"}
 
 
