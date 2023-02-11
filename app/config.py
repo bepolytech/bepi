@@ -12,4 +12,4 @@ class Settings(BaseSettings):
 # New decorator for cache
 @lru_cache()
 def get_settings():
-    return Settings()
+    return Settings() # type: ignore

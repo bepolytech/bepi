@@ -29,11 +29,11 @@ class Door:
     def getStatus(self):
         print("Getting door status")
         # TODO time.unix_time()
-        pythonEpochTime = getEpochTime
-        if pythonEpochTime - removeOffsetEpochTime(int(self.time_unix)) > 300000: # 5 minutes = 300000 ms
+        pythonEpochTime = getEpochTime()
+        if (pythonEpochTime - removeOffsetEpochTime(int(self.time_unix))) > 300000: # 5 minutes = 300000 ms
             print("python epoch time: " + str(pythonEpochTime))
             print("door epoch time: " + self.time_unix)
-            print("difference too big: " + str(getEpochTime - int(self.time_unix)), " > 300000ms (5min)")
+            print("difference too big: " + str(getEpochTime() - int(self.time_unix)), " > 300000ms (5min)")
             print("door status = 2")
             return {"state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé", "time": self.time}
         print("door status = " + str(self.state) + ", info = " + self.info + ", time = " + self.time)
