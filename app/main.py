@@ -121,7 +121,7 @@ async def read_door(request: Request) -> dict:
 
 # add ", include_in_schema=False" to hide this endpoint from the docs
 # "Depends(auth.get_api_key)"
-@app.post("/local/", dependencies=[Depends(auth.api_key_auth)], tags=["local"])
+@app.put("/local/", dependencies=[Depends(auth.api_key_auth)], tags=["local"])
 @limiter.limit("300/minute") # 300 requests per minute = 5 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 #def post_door(request: Request, api_key: APIKey = Depends(auth.get_api_key), state: int = 2, info: str = "No info", time: str = "No time", time_unix: int = 1) -> dict:
