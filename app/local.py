@@ -9,23 +9,25 @@ class Local(BaseModel):
     """Local class, used to store local's data such as door state, info, temperature, humidity, etc."""
 
     # class attributes
-    id: int = Field(description="Local id, used if there are multiple locals")
-    temperature: int = Field(description="Temperature in Celcius")
-    humidity: int = Field(description="Humidity in %")
-    doorState: int = Field(description="Door state, 0=closed, 1=open, 2=unknown")  # 0 = closed, 1 = open, 2 = unknown
-    doorUpdateTime: str = Field(description="Door update time, human readable")
-    doorUpdateTimeUnix: int = Field(description="Door update time, unix/epoch")
-    info: str = Field(description="Info about the local or door")
+    id: int = Field(description="Local id, used if there are multiple locals", example=1)
+    temperature: int = Field(description="Temperature in Celcius", example=20)
+    humidity: int = Field(description="Humidity in %", example=30)
+    # doorState => 0 = closed, 1 = open, 2 = unknown :
+    doorState: int = Field(description="Door state, 0=closed, 1=open, 2=unknown", example=0)
+    doorUpdateTime: str = Field(description="Door update time, human readable", example="2021-05-01 12:00:00")
+    doorUpdateTimeUnix: int = Field(description="Door update time, unix/epoch", example=1610000000)
+    info: str = Field(description="Info about the local or door", example="Le BEP vous souhaite une bonne année!")
 
     # instace attributes
-    def __init__(self, id:int):
-        self.id: int = id
-        self.temperature: int = 0
-        self.humidity: int = 0
-        self.doorState: int = 2 # 0 = closed, 1 = open, 2 = unknown 
-        self.doorUpdateTime: str = "Unknown"
-        self.doorUpdateTimeUnix: int = 1
-        self.info: str = "No info"
+    def __init__(self, id:int) -> None:
+        super().__init__(id=id, temperature=0, humidity=0, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=1, info="No info")
+        #self.id: int = id
+        #self.temperature: int = 0
+        #self.humidity: int = 0
+        #self.doorState: int = 2 # 0 = closed, 1 = open, 2 = unknown 
+        #self.doorUpdateTime: str = "Unknown"
+        #self.doorUpdateTimeUnix: int = 1
+        #self.info: str = "No info"
 
     def updateDoorStatus(self, doorState: int = 2):
         print("Updating door status")
@@ -76,7 +78,7 @@ class Local(BaseModel):
             print("door epoch time: " + str(self.doorUpdateTimeUnix))
             print("difference too big: " + str(getEpochTime() - int(self.doorUpdateTimeUnix)), " > 300000ms (5min)")
             print("door status = 2")
-            return {"door_state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé", "update_time": self.getUpdateTime, "temperature": self.getTemperature, "humidity": self.getHumidity}
+            return {"door_state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé.", "update_time": str(self.getUpdateTime()), "temperature": str(self.getTemperature()), "humidity": str(self.getHumidity())}
         print("door status = " + str(self.getDoorState()) + ", info = " + self.getInfo() + ", time = " + self.getUpdateTime())
         return {"temperature": self.getTemperature(), "humidity": self.getHumidity(), "door_state": self.getDoorState(), "info": self.getInfo(), "update_time": self.getUpdateTime()}
 

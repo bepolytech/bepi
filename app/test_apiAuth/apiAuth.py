@@ -1,4 +1,3 @@
-
 from config import Settings, get_settings
 
 from fastapi.security.api_key import APIKeyHeader
