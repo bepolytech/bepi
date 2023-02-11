@@ -14,12 +14,49 @@ import re
 
 from local import Local
 
+api_description = """
+🚀 API for the BEP - Bureau Étudiant de Polytechnique ⚒️
+
+## Local
+
+You can **`GET local`**'s data:
+* **Door state**
+* **Door update time**
+* **Info**
+* **Temperature**
+* **Humidity**
+
+## Door (in Local)
+
+You can **`GET door`**'s data:
+* **Door state**
+* **Door update time**
+
+> **Note:** **`POST door`** requires a private API key, reserved for BEP.
+"""
+
+tags_metadata = [
+    {
+        "name": "local",
+        "description": "Operations with the BEP's Local data.",
+    },
+    {
+        "name": "door",
+        "description": "Data about the BEP's door.",
+    },
+]
+
 limiter = Limiter(key_func=get_remote_address, headers_enabled=True, default_limits=[
                   "300/minute"])  # 300 requests per minute = 5 requests per second
 app = FastAPI(
     title="BEP API - BEPI",
-    description="API for the BEP - Bureau Étudiant de Polytechnique",
-    version="0.1.1",
+    description=api_description,
+    version="0.1.2",
+    contact={
+        "name": "BEP - Bureau Étudiant de Polytechnique",
+        "url": "http://bepolytech.be/",
+    },
+    openapi_tags=tags_metadata
 )
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -82,7 +119,9 @@ async def read_door(request: Request) -> dict:
     ###return door.getStatus()
 
 
-@app.post("/local/", dependencies=[Depends(auth.get_api_key)], tags=["local"])
+# add ", include_in_schema=False" to hide this endpoint from the docs
+# "Depends(auth.get_api_key)"
+@app.post("/local/", dependencies=[Depends(auth.api_key_auth)], tags=["local"])
 @limiter.limit("300/minute") # 300 requests per minute = 5 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 #def post_door(request: Request, api_key: APIKey = Depends(auth.get_api_key), state: int = 2, info: str = "No info", time: str = "No time", time_unix: int = 1) -> dict:

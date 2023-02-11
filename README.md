@@ -1,10 +1,9 @@
-# ouverture-local-api-server
-### API server for the door open status  
+# BEPI - BEP's API
+### API server for the local, like the door open status  
 
-- FastAPI (Python)  
-or  
-- Rocket (Rust)  
-or  
-- Actix-Web (Rust)  
-or  
-- JavaScript (ExpressJS)  
+Built with FastAPI (Python)
+
+## Docs
+docs available at _$url_/docs or _$url_/redoc
+
+### by PLucas 🚀
