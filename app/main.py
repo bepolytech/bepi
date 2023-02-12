@@ -236,8 +236,10 @@ async def read_temp(request: Request) -> dict:
     return res
 
 
+# -- testing -- #
+
 @app.post("/test/", tags=["test"])
-@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+@limiter.limit("60/minute")  # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def update_test(request: Request) -> dict:
     res = {"test": "success"}
@@ -245,17 +247,17 @@ async def update_test(request: Request) -> dict:
     print(res)
     return res
 
-@app.get("/test/", tags=["test"])
-@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
-# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
-async def read_test(request: Request) -> dict:
-    return local.getStatusJSON()
-
-@app.put("/test/", tags=["test"])
-@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
-# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
-async def update_test2(request: Request, updated_local: Local = local) -> dict:
-    return updated_local.getStatusJSON()
+#@app.get("/test/", tags=["test"])
+#@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+## request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+#async def read_test(request: Request) -> dict:
+#    return local.getStatusJSON()
+#
+#@app.put("/test/", tags=["test"])
+#@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+## request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+#async def update_test2(request: Request, updated_local: Local = local) -> dict:
+#    return updated_local.getStatusJSON()
 
 
 # -- middleware -- #
