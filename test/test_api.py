@@ -1,5 +1,6 @@
 import requests
 from decouple import config
+import time
 
 ######
 
@@ -26,6 +27,8 @@ print(requests.get(URL+"/door/").json())
 print("get local:")
 print(requests.get(URL+"/local/").json())
 
+time_unix = int(time.time())
+print("time_unix = " + str(time_unix))
 print("PUT local with api_key:")
 print(
     requests.put(
@@ -33,8 +36,8 @@ print(
         json={
             "door_state": 1,
             "info": "testing api with api key",
-            "upsate_time": "2021-01-01 00:00:00",
-            "update_time_unix": 1610000000,
+            "update_time": "2021-01-01 00:00:00",
+            "update_time_unix": time_unix,
             "temperature": 21,
             "humidity": 50
         },
@@ -54,8 +57,8 @@ print(
         json={
             "door_state": 0,
             "info": "testing api",
-            "upsate_time": "2023-01-01 00:30:00",
-            "update_time_unix": 1610000000,
+            "update_time": "2023-01-01 00:30:00",
+            "update_time_unix": time_unix,
             "temperature": 31,
             "humidity": 99
         }

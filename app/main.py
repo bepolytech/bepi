@@ -77,7 +77,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.0.0",
+    version="1.1.0",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
@@ -157,7 +157,14 @@ async def read_local(request: Request) -> dict:
 @app.put("/local/", dependencies=[Depends(auth.get_api_key)], tags=["local"])
 @limiter.limit("300/minute") # 300 requests per minute = 5 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
-def update_local(request: Request, door_state: int = 2, info: str = "No info", update_time: str = "No time", update_time_unix: int = 1, temperature: int = 10, humidity: int = 0) -> dict:
+def update_local(*, request: Request,
+        door_state: int = 2,
+        info: str = "No info",
+        update_time: str = "No time",
+        update_time_unix: int,
+        temperature: int = 69,
+        humidity: int = 420
+    ) -> dict:
 
     origin_ip=""
     print("Analyzing request headers for x-forwarded-for:")
@@ -177,7 +184,7 @@ def update_local(request: Request, door_state: int = 2, info: str = "No info", u
         print(res)
         return res
     print("Local update PUT request process failed")
-    res = {"api_key": "incorrect", "auth": "not", "update": "failed"}
+    res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail" : "unix time error"}
     print("Sending response:")
     print(res)
     return res
@@ -231,6 +238,18 @@ async def update_test(request: Request) -> dict:
     print("Sending response:")
     print(res)
     return res
+
+@app.get("/test/", tags=["test"])
+@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+async def read_test(request: Request) -> dict:
+    return local.getStatusJSON()
+
+@app.put("/test/", tags=["test"])
+@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+async def update_test2(request: Request, updated_local: Local = local) -> dict:
+    return updated_local.getStatusJSON()
 
 
 # -- middleware -- #
