@@ -83,9 +83,9 @@ class Local(BaseModel):
             print("door epoch time: " + str(self.doorUpdateTimeUnix))
             print("difference too big: " + str(diff), "sec(" + str(diff/60) + "min) > " + str(MAX_TIME) + "sec(~" + str(MAX_TIME/60) + "min)")
             print("door status = 2")
-            return {"door_state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé.", "update_time": self.getUpdateTime(), "temperature": self.getTemperature(), "humidity": self.getHumidity(), "door_update_time_unix": self.getUpdateTimeUnix()}
+            return {"door_state": 2, "info": "Last update was too long ago, the door status was not updated. Local est alors sans doute fermé.", "update_time": self.getUpdateTime(), "temperature": self.getTemperature(), "humidity": self.getHumidity(), "update_time_unix": self.getUpdateTimeUnix()}
         print("door status = " + str(self.doorState) + ", info = " + self.info + ", time = " + self.doorUpdateTime, ", temperature = " + str(self.temperature), ", humidity = " + str(self.humidity), ", door_update_time_unix = " + str(self.doorUpdateTimeUnix))
-        return {"temperature": self.getTemperature(), "humidity": self.getHumidity(), "door_state": self.getDoorState(), "info": self.getInfo(), "update_time": self.getUpdateTime(), "door_update_time_unix": self.getUpdateTimeUnix()}
+        return {"temperature": self.getTemperature(), "humidity": self.getHumidity(), "door_state": self.getDoorState(), "info": self.getInfo(), "update_time": self.getUpdateTime(), "update_time_unix": self.getUpdateTimeUnix()}
 
     def getDoorState(self) -> int:
         pythonEpochTime: int = getEpochTime()
