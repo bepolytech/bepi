@@ -11,7 +11,7 @@ from local import Local
 api_description = """
 🚀 API for the BEP - Bureau Étudiant de Polytechnique ⚒️
 
-### **🚨 Requests are rate-limited at 120/minute. 🚨**
+### **🚨⚠️ Requests are rate-limited at 120/minute. ⚠️🚨**
 
 ## Local
 
@@ -27,6 +27,9 @@ You can **`GET /local`**'s data:
     In °C
 * **Humidity** (`"humidity" : int`)  
     In %
+* **Door update time (UNIX)** (`"update_time_unix" : int`)  
+    Epoch time, seconds since 1970-01-01 00:00:00 UTC(+1)  
+    ⚠️ this has an offset of UTC+1 applied (so +3600 compared to true UNIX time(UTC))
 
 ## Door (in Local)
 
@@ -36,6 +39,9 @@ You can **`GET /door`**'s data:
     _The door state is unknown when the last update was too long ago (more than 5 minutes), meaning a problem occured with the door status system._
 * **Door update time** (`"update_time" : str`)  
     Human readable
+* **Door update time (UNIX)** (`"update_time_unix" : int`)  
+    Epoch time, seconds since 1970-01-01 00:00:00 UTC(+1)  
+    ⚠️ this has an offset of UTC+1 applied (so +3600 compared to true UNIX time(UTC))
 
 ## Temperature and humidity (in Local)
 
@@ -204,7 +210,7 @@ async def read_door(request: Request) -> dict:
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
     print("GET request at /door/ from " + str(origin_ip))
-    res = {"door_state": local.getDoorState()}
+    res = {"door_state": local.getDoorState(), "update_time": local.getUpdateTime(), "update_time_unix": local.getUpdateTimeUnix()}
     print("Sending response:")
     print(res)
     return res
