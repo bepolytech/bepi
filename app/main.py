@@ -5,8 +5,8 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import re
 
-from apiAuth import ApiAuth
 from local import Local
+from apiauth import ApiAuth
 
 api_description = """
 🚀 API for the BEP - Bureau Étudiant de Polytechnique ⚒️
@@ -83,7 +83,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.1.1",
+    version="1.1.7",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
