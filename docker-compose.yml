@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.5' # 3.5 because we use centos7
 
 services:
   bep-api:
