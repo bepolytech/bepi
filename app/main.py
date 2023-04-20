@@ -83,7 +83,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.2.0",
+    version="1.2.2",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
@@ -116,7 +116,10 @@ async def read_root(request: Request) -> dict:
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("GET request at / (root) from " + str(origin_ip))
+        else:
+            print("No x-forwarded-for header found")
+    #print("GET request at / (root) from " + str(origin_ip))
+    print("GET request at / (root)")
     res = {"Hello": "BEP"}
     print("Sending response:")
     print(res)
@@ -133,7 +136,10 @@ async def read_bep(request: Request) -> dict:
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("GET request at /bep/ from " + str(origin_ip))
+        else:
+            print("No x-forwarded-for header found")
+    #print("GET request at /bep/ from " + str(origin_ip))
+    print("GET request at /bep/")
     res = {"BEP": "BEP!"}
     print("Sending response:")
     print(res)
@@ -153,7 +159,10 @@ async def read_local(request: Request) -> dict:
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("GET request at /local/ from " + str(origin_ip))
+        else:
+            print("No x-forwarded-for header found")
+    #print("GET request at /local/ from " + str(origin_ip))
+    print("GET request at /local/")
     res = local.getStatusJSON()
     print("Sending response:")
     print(res)
@@ -179,7 +188,10 @@ def update_local(*, request: Request,
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("PUT request at /local/ from " + str(origin_ip))
+        else:
+            print("No x-forwarded-for header found")
+    #print("PUT request at /local/ from " + str(origin_ip))
+    print("PUT request at /local/")
     if local.updateDoorStateTime(update_time, update_time_unix):
         local.updateDoorStatus(door_state)
         local.updateInfo(info)
@@ -209,7 +221,10 @@ async def read_door(request: Request) -> dict:
             origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
             print(f"origin_ip:\t{origin_ip}")
             print(f"forward_ip:\t{forward_ip}")
-    print("GET request at /door/ from " + str(origin_ip))
+        else:
+            print("No x-forwarded-for header found")
+    #print("GET request at /door/ from " + str(origin_ip))
+    print("GET request at /door/")
     res = {"door_state": local.getDoorState(), "update_time": local.getUpdateTime(), "update_time_unix": local.getUpdateTimeUnix()}
     print("Sending response:")
     print(res)
