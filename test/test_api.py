@@ -30,6 +30,7 @@ print(requests.get(URL+"/local/").json())
 time_unix = int(time.time())
 print("time_unix = " + str(time_unix))
 print("PUT local with api_key:")
+time_unix = int(time.time())
 print(
     requests.put(
         URL+"/local/",
