@@ -4,6 +4,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import re
+from fastapi.middleware.cors import CORSMiddleware
 
 from local import Local
 from apiauth import ApiAuth
@@ -83,7 +84,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.2.3",
+    version="1.3.0",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
@@ -287,3 +288,18 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     print("Middleware finished, added process time to response headers")
     return response
+
+origins = [
+    "https://bepolytech.be",
+    "http://localhost",
+    "http://localhost:8000",
+    "*" # ALLOW ALL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -51,10 +51,16 @@ class Local(BaseModel):
                 raise ValueError("ERROR: Impossible unix time for update time, cannot be negative")
             if doorUpdateTimeUnix < self.doorUpdateTimeUnix:
                 print("ERROR: Update time received incorrect, cannot be less than previous time")
+                print("previous time: " + str(self.doorUpdateTimeUnix))
+                print("new time: " + str(doorUpdateTimeUnix))
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, cannot be less than previous time")
                 raise ValueError("ERROR: Update time received incorrect, cannotbe less than previous time")
             if doorUpdateTimeUnix > (int(time.time()) + 120000): # 2 minutes
                 print("ERROR: Update time received incorrect, too far ahead from current time")
+                print("current time: " + str(int(time.time())))
+                print("new time: " + str(doorUpdateTimeUnix))
+                print("more that 2 minutes ahead")
+                print("difference: " + str(doorUpdateTimeUnix - int(time.time())) + " ms")
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
                 raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
             self.doorUpdateTime = doorUpdateTime
@@ -131,6 +137,7 @@ class Local(BaseModel):
 
 def getEpochTime() -> int:
     epochTime = int(time.time())
+    print("getting Epoch time: " + str(epochTime))
     return epochTime
 
 
