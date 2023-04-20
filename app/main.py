@@ -83,7 +83,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.2.2",
+    version="1.2.3",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
@@ -109,15 +109,15 @@ auth = ApiAuth()
 @limiter.limit("120/minute") # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def read_root(request: Request) -> dict:
-    origin_ip = ""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-        else:
-            print("No x-forwarded-for header found")
+    #origin_ip = ""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
     #print("GET request at / (root) from " + str(origin_ip))
     print("GET request at / (root)")
     res = {"Hello": "BEP"}
@@ -129,15 +129,15 @@ async def read_root(request: Request) -> dict:
 @limiter.limit("120/minute") # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def read_bep(request: Request) -> dict:
-    origin_ip = ""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-        else:
-            print("No x-forwarded-for header found")
+    #origin_ip = ""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
     #print("GET request at /bep/ from " + str(origin_ip))
     print("GET request at /bep/")
     res = {"BEP": "BEP!"}
@@ -152,15 +152,15 @@ async def read_bep(request: Request) -> dict:
 @limiter.limit("120/minute") # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def read_local(request: Request) -> dict:
-    origin_ip = ""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-        else:
-            print("No x-forwarded-for header found")
+    #origin_ip = ""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
     #print("GET request at /local/ from " + str(origin_ip))
     print("GET request at /local/")
     res = local.getStatusJSON()
@@ -181,15 +181,15 @@ def update_local(*, request: Request,
         humidity: int = 420
     ) -> dict:
 
-    origin_ip=""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-        else:
-            print("No x-forwarded-for header found")
+    #origin_ip=""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
     #print("PUT request at /local/ from " + str(origin_ip))
     print("PUT request at /local/")
     if local.updateDoorStateTime(update_time, update_time_unix):
@@ -214,15 +214,15 @@ def update_local(*, request: Request,
 @limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def read_door(request: Request) -> dict:
-    origin_ip = ""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-        else:
-            print("No x-forwarded-for header found")
+    #origin_ip = ""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
     #print("GET request at /door/ from " + str(origin_ip))
     print("GET request at /door/")
     res = {"door_state": local.getDoorState(), "update_time": local.getUpdateTime(), "update_time_unix": local.getUpdateTimeUnix()}
@@ -237,14 +237,15 @@ async def read_door(request: Request) -> dict:
 @limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 async def read_temp(request: Request) -> dict:
-    origin_ip = ""
-    print("Analyzing request headers for x-forwarded-for:")
-    for header in request.headers.raw:
-        if header[0] == 'x-forwarded-for'.encode('utf-8'):
-            origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
-            print(f"origin_ip:\t{origin_ip}")
-            print(f"forward_ip:\t{forward_ip}")
-    print("GET request at /temps/ from " + str(origin_ip))
+    #origin_ip = ""
+    #print("Analyzing request headers for x-forwarded-for:")
+    #for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #print("GET request at /temps/ from " + str(origin_ip))
+    print("GET request at /temps/")
     res = {"temperature": local.getTemperature(), "humidity": local.getHumidity()}
     print("Sending response:")
     print(res)
