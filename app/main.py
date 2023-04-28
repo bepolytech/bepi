@@ -184,8 +184,6 @@ async def read_local(request: Request) -> dict:
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 def update_local(*, request: Request,
         door_state: int = 2,
-        #info: str = "No info",
-        #update_time: str = "No time",
         update_time_unix: int,
         temperature: int = 69,
         humidity: int = 69
@@ -202,18 +200,15 @@ def update_local(*, request: Request,
     #        print("No x-forwarded-for header found")
     #print("PUT request at /local/ from " + str(origin_ip))
     print("PUT request at /local/")
-    #if local.updateDoorStateTime(update_time, update_time_unix):
-    if local.updateDoorStateTime(update_time_unix):
+    cond = local.updateDoorStateTime(update_time_unix)
+    if cond:
         local.updateDoorStatus(door_state)
-        #local.updateInfo(info)
         local.updateTempandHum(temperature, humidity)
         print("Local update PUT request successfully processed")
         res = {"api_key": "correct", "auth": "yes", "update": "success"}
-        print("Sending response:")
-        print(res)
-        return res
-    print("Local update PUT request process failed")
-    res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail" : "unix time error"}
+    else:
+        print("Local update PUT request process failed")
+        res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail" : "unix time error"}
     print("Sending response:")
     print(res)
     return res
@@ -245,7 +240,7 @@ async def read_info(request: Request) -> dict:
 @limiter.limit("300/minute")  # 300 requests per minute = 5 requests per second
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 def update_info(*, request: Request,
-                 info: str = "No info"
+                 info: str = "Pas d'info"
                  ) -> dict:
     print("PUT request at /info/")
     try:

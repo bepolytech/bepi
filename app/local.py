@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from decouple import config
 from fastapi import HTTPException, status
 
-MAX_TIME: int = int(config("MAX_TIME", cast=int, default=300)) # 5 minutes = 300000 ms
+MAX_TIME: int = int(config("MAX_TIME", cast=int, default=300)) # 5 minutes = 300 s
 UTC_OFFSET: int = int(config("UTC_OFFSET", cast=int, default=3600)) # UTC+2
 
 # uses Pydantic's BaseModel
@@ -12,18 +12,18 @@ class Local(BaseModel):
 
     # class attributes
     id: int = Field(description="Local id, used if there are multiple locals", example=1)
-    temperature: int = Field(description="Temperature in Celcius", example=69)
-    humidity: int = Field(description="Humidity in %", example=2)
+    temperature: int = Field(description="Temperature in Celcius", example=21)
+    humidity: int = Field(description="Humidity in %", example=15)
     # doorState => 0 = closed, 1 = open, 2 = unknown :
     doorState: int = Field(description="Door state, 0=closed, 1=open, 2=unknown", example=0)
-    doorUpdateTime: str = Field(description="Door update time, human readable", example="2021-05-01 12:00:00")
-    doorUpdateTimeUnix: int = Field(description="Door update time, unix/epoch", example=int(time.time())+UTC_OFFSET)
+    doorUpdateTime: str = Field(description="Door update time, human readable", example="01/05/2023 14:30:00")
+    doorUpdateTimeUnix: int = Field(description="Door update time, unix/epoch", example=int(time.time()))
     info: str = Field(description="Info about the local or door", example="Le BEP vous souhaite une bonne année!")
 
     # instace attributes
     def __init__(self, id:int) -> None:
         # NEEDS to call the super (BaseModel) __init__() from Pydantic to work
-        super().__init__(id=id, temperature=69, humidity=420, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=int(time.time())+UTC_OFFSET, info="No info")
+        super().__init__(id=id, temperature=69, humidity=69, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=int(time.time()), info="Pas d'info")
 
     def updateDoorStatus(self, doorState: int = 2):
         print("Updating door status")
@@ -42,8 +42,7 @@ class Local(BaseModel):
         except:
             print("ERROR: Temperature and humidity update failed")
 
-    #def updateDoorStateTime(self, doorUpdateTime: str = "Unknown", doorUpdateTimeUnix: int = 1) -> bool:
-    def updateDoorStateTime(self, offsetDoorUpdateTimeUnix: int = 1) -> bool:
+    def updateDoorStateTime(self, offsetDoorUpdateTimeUnix: int = 100) -> bool:
         print("Updating door state time")
         doorUpdateTimeUnix = removeOffsetEpochTime(offsetDoorUpdateTimeUnix)
         try:
@@ -57,7 +56,7 @@ class Local(BaseModel):
                 print("new time: " + str(doorUpdateTimeUnix))
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, cannot be less than previous time")
                 raise ValueError("ERROR: Update time received incorrect, cannotbe less than previous time")
-            if doorUpdateTimeUnix > (int(time.time()) + 120000): # 2 minutes
+            if doorUpdateTimeUnix > (int(time.time()) + 120): # 2 minutes
                 print("ERROR: Update time received incorrect, too far ahead from current time")
                 print("current time: " + str(int(time.time())))
                 print("new time: " + str(doorUpdateTimeUnix))
@@ -65,16 +64,15 @@ class Local(BaseModel):
                 print("difference: " + str(doorUpdateTimeUnix - int(time.time())) + " ms")
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
                 raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
-            #self.doorUpdateTime = doorUpdateTime
-            self.doorUpdateTime = HumanReadableTime()
-            self.doorUpdateTimeUnix = doorUpdateTimeUnix
+            self.doorUpdateTime = str(HumanReadableTime(doorUpdateTimeUnix))
+            self.doorUpdateTimeUnix = int(doorUpdateTimeUnix)
             print("Door updated state time updated")
             return True
         except:
             print("ERROR: Door updated state time update failed")
             return False
     
-    def updateInfo(self, info: str = "No info"):
+    def updateInfo(self, info: str = "Pas d'info"):
         print("Updating info")
         try:
             self.info = info
@@ -86,7 +84,7 @@ class Local(BaseModel):
         print("Getting local status")
         pythonEpochTime: int= getEpochTime()
         diff: int = pythonEpochTime - int(self.doorUpdateTimeUnix)
-        # 5 minutes = 300000 ms
+        # 5 minutes = 300 s
         if diff > int(MAX_TIME):
             print("python epoch time: " + str(pythonEpochTime))
             print("door epoch time: " + str(self.doorUpdateTimeUnix))
@@ -99,7 +97,7 @@ class Local(BaseModel):
     def getDoorState(self) -> int:
         pythonEpochTime: int = getEpochTime()
         diff: int = pythonEpochTime - int(self.doorUpdateTimeUnix)
-        # 5 minutes = 300000 ms
+        # 5 minutes = 300 s
         if diff > int(MAX_TIME):
             print("python epoch time: " + str(pythonEpochTime))
             print("door epoch time: " + str(self.doorUpdateTimeUnix))
@@ -137,7 +135,7 @@ class Local(BaseModel):
         return self.humidity
 
 
-def HumanReadableTime(epochTime: int = int(time.time())) -> str:
+def HumanReadableTime(epochTime = None) -> str:
     return time.strftime("%d/%m/%Y %H:%M", time.localtime(epochTime))
 
 
@@ -148,6 +146,7 @@ def getEpochTime() -> int:
 
 
 def removeOffsetEpochTime(epochTime: int) -> int:
-    # default 1 hour, Brussels time (CET)
-    offset: int =  int(config("UTC_OFFSET", cast=int, default="3600"))
-    return epochTime - offset
+    # default 1 hour, Brussels time (CET), winter time
+    offset: int =  UTC_OFFSET
+    res = epochTime - offset
+    return res
