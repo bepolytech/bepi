@@ -67,7 +67,7 @@ class Local(BaseModel):
                 raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
             self.doorUpdateTime = HumanReadableTime(doorUpdateTimeUnix)
             self.doorUpdateTimeUnix = int(doorUpdateTimeUnix)
-            print("Door updated state time updated")
+            print("Door updated state time updated successfully")
             return True
         except:
             print("ERROR: Door updated state time update failed")
