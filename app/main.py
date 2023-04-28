@@ -16,37 +16,41 @@ api_description = """
 
 ## Local
 
-You can **`GET /local`**'s data:
+You can **`GET /local/`**'s data:
 * **Door state** (`"door_state" : int`)  
     0 = closed, 1 = open, 2 = unknown  
     _The door state is unknown when the last update was too long ago (more than 5 minutes), meaning a problem occured with the door status system._
 * **Door update time** (`"update_time" : str`)  
     Human readable
 * **Info** (`"info" : str`)  
-    Info about the local or door
+    Info about the Local or door
 * **Temperature** (`"temperature" : int`)  
     In °C
 * **Humidity** (`"humidity" : int`)  
     In %
 * **Door update time (UNIX)** (`"update_time_unix" : int`)  
-    Epoch time, seconds since 1970-01-01 00:00:00 UTC(+1)  
-    ⚠️ this has an offset of UTC+1 applied (so +3600 compared to true UNIX time(UTC))
+    Epoch time, seconds since 1970-01-01 00:00:00 UTC
+
+## Info (about BEP or Local)
+
+You can **`GET /info/`**'s data:
+* **Info** (`"info" : str`)  
+    Info about the Local or door
 
 ## Door (in Local)
 
-You can **`GET /door`**'s data:
+You can **`GET /door/`**'s data:
 * **Door state** (`"door_state" : int`)  
     0 = closed, 1 = open, 2 = unknown  
     _The door state is unknown when the last update was too long ago (more than 5 minutes), meaning a problem occured with the door status system._
 * **Door update time** (`"update_time" : str`)  
     Human readable
 * **Door update time (UNIX)** (`"update_time_unix" : int`)  
-    Epoch time, seconds since 1970-01-01 00:00:00 UTC(+1)  
-    ⚠️ this has an offset of UTC+1 applied (so +3600 compared to true UNIX time(UTC))
+    Epoch time, seconds since 1970-01-01 00:00:00 UTC
 
 ## Temperature and humidity (in Local)
 
-You can **`GET /temp`** data:
+You can **`GET /temp/`** data:
 * **Temperature** (`"temperature" : int`)
     In °C
 * **Humidity** (`"humidity" : int`)
@@ -56,14 +60,19 @@ You can **`GET /temp`** data:
 BEP website: [bepolytech.be](http://bepolytech.be/)  
 
 > *Notes:*
-> - **`PUT /local`** requires a private API key, reserved for BEP.  
+> - **`PUT /local/`** requires a private API key, reserved for BEP.  
+> - **`PUT /info/`** requires a private API key, reserved for BEP.  
 > - Any request to non-existent endpoints will return `{"detail": "Not Found"}`.
 """
 
 tags_metadata = [
     {
         "name": "local",
-        "description": "Operations with the BEP's Local data.",
+        "description": "Info and operations with the BEP's Local data.",
+    },
+    {
+        "name": "info",
+        "description": "Info about BEP or its Local.",
     },
     {
         "name": "door",
@@ -84,7 +93,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.3.0",
+    version="1.4.0",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "http://bepolytech.be/",
