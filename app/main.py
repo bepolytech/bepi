@@ -175,11 +175,11 @@ async def read_local(request: Request) -> dict:
 # request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
 def update_local(*, request: Request,
         door_state: int = 2,
-        info: str = "No info",
-        update_time: str = "No time",
+        #info: str = "No info",
+        #update_time: str = "No time",
         update_time_unix: int,
         temperature: int = 69,
-        humidity: int = 420
+        humidity: int = 69
     ) -> dict:
 
     #origin_ip=""
@@ -193,9 +193,10 @@ def update_local(*, request: Request,
     #        print("No x-forwarded-for header found")
     #print("PUT request at /local/ from " + str(origin_ip))
     print("PUT request at /local/")
-    if local.updateDoorStateTime(update_time, update_time_unix):
+    #if local.updateDoorStateTime(update_time, update_time_unix):
+    if local.updateDoorStateTime(update_time_unix):
         local.updateDoorStatus(door_state)
-        local.updateInfo(info)
+        #local.updateInfo(info)
         local.updateTempandHum(temperature, humidity)
         print("Local update PUT request successfully processed")
         res = {"api_key": "correct", "auth": "yes", "update": "success"}
@@ -207,6 +208,46 @@ def update_local(*, request: Request,
     print("Sending response:")
     print(res)
     return res
+
+
+@app.get("/info/", tags=["info"])
+@limiter.limit("120/minute")  # 120 requests per minute = 2 requests per second
+# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+async def read_info(request: Request) -> dict:
+    # origin_ip = ""
+    # print("Analyzing request headers for x-forwarded-for:")
+    # for header in request.headers.raw:
+    #    if header[0] == 'x-forwarded-for'.encode('utf-8'):
+    #        origin_ip, forward_ip = re.split(', ', header[1].decode('utf-8'))
+    #        print(f"origin_ip:\t{origin_ip}")
+    #        print(f"forward_ip:\t{forward_ip}")
+    #    else:
+    #        print("No x-forwarded-for header found")
+    # print("GET request at /local/ from " + str(origin_ip))
+    print("GET request at /info/")
+    info = local.getInfo()
+    res = {"info": info}
+    print("Sending response:")
+    print(res)
+    return res
+
+
+@app.put("/info/", dependencies=[Depends(auth.get_api_key)], tags=["info"])
+@limiter.limit("300/minute")  # 300 requests per minute = 5 requests per second
+# request argument must be explicitly passed to your endpoint, or slowapi won't be able to hook into it :
+def update_info(*, request: Request,
+                 info: str = "No info"
+                 ) -> dict:
+    print("PUT request at /info/")
+    try:
+        local.updateInfo(info)
+        print("Info update PUT request successfully processed")
+        res = {"api_key": "correct", "auth": "yes", "update": "success"}
+    except:
+        print("Info update PUT request process failed")
+        res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail": "info update failed"}
+    finally:
+        return res
 
 
 # -- Door status -- #

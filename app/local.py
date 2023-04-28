@@ -42,8 +42,10 @@ class Local(BaseModel):
         except:
             print("ERROR: Temperature and humidity update failed")
 
-    def updateDoorStateTime(self, doorUpdateTime: str = "Unknown", doorUpdateTimeUnix: int = 1) -> bool:
+    #def updateDoorStateTime(self, doorUpdateTime: str = "Unknown", doorUpdateTimeUnix: int = 1) -> bool:
+    def updateDoorStateTime(self, offsetDoorUpdateTimeUnix: int = 1) -> bool:
         print("Updating door state time")
+        doorUpdateTimeUnix = removeOffsetEpochTime(offsetDoorUpdateTimeUnix)
         try:
             if doorUpdateTimeUnix < 1:
                 print("ERROR: Impossible unix time for update time, cannot be negative")
@@ -63,7 +65,8 @@ class Local(BaseModel):
                 print("difference: " + str(doorUpdateTimeUnix - int(time.time())) + " ms")
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
                 raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
-            self.doorUpdateTime = doorUpdateTime
+            #self.doorUpdateTime = doorUpdateTime
+            self.doorUpdateTime = HumanReadableTime()
             self.doorUpdateTimeUnix = doorUpdateTimeUnix
             print("Door updated state time updated")
             return True
@@ -82,7 +85,7 @@ class Local(BaseModel):
     def getStatusJSON(self):
         print("Getting local status")
         pythonEpochTime: int= getEpochTime()
-        diff: int = pythonEpochTime - removeOffsetEpochTime(int(self.doorUpdateTimeUnix))
+        diff: int = pythonEpochTime - int(self.doorUpdateTimeUnix)
         # 5 minutes = 300000 ms
         if diff > int(MAX_TIME):
             print("python epoch time: " + str(pythonEpochTime))
@@ -95,8 +98,7 @@ class Local(BaseModel):
 
     def getDoorState(self) -> int:
         pythonEpochTime: int = getEpochTime()
-        diff: int = pythonEpochTime - \
-            removeOffsetEpochTime(int(self.doorUpdateTimeUnix))
+        diff: int = pythonEpochTime - int(self.doorUpdateTimeUnix)
         # 5 minutes = 300000 ms
         if diff > int(MAX_TIME):
             print("python epoch time: " + str(pythonEpochTime))
@@ -133,6 +135,10 @@ class Local(BaseModel):
             print("Humidity > 100 ???")
             return 100
         return self.humidity
+
+
+def HumanReadableTime(epochTime: int = int(time.time())) -> str:
+    return time.strftime("%d/%m/%Y %H:%M", time.localtime(epochTime))
 
 
 def getEpochTime() -> int:
