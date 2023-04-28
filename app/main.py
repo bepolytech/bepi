@@ -88,15 +88,14 @@ tags_metadata = [
     }
 ]
 
-limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_limits=[
-                  "300/minute"])  # 300 requests per minute = 5 requests per second
+limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_limits=["300/minute"])  # 300 requests per minute = 5 requests per second
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
     version="1.4.0",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
-        "url": "http://bepolytech.be/",
+        "url": "https://bepolytech.be/",
     },
     openapi_tags=tags_metadata
 )
@@ -105,15 +104,17 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 # -- initialize Local(s) -- #
-local = Local(1) # id = 1
+local = Local(0, "Local BEP - S.UB1.149") # id = 0
 #if we want to add more locals, we would could another instance with another id to differentiate them, like this:
-#local2 = Local(2) # id = 2
+#local1 = Local(1, "BEP Cave - S.UA1.xxx") # id = 1
 #we could then make a list of BEP's locals, if needed:
-#locals = [local1, local2]
+#locals = [local, local1]
 
 # -- initialize API key auth -- #
 auth = ApiAuth()
 
+
+### ----- routes/requests handlers ----- ###
 
 @app.get("/", tags=["root"])
 @limiter.limit("120/minute") # 120 requests per minute = 2 requests per second

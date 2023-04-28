@@ -12,6 +12,7 @@ class Local(BaseModel):
 
     # class attributes
     id: int = Field(description="Local id, used if there are multiple locals", example=1)
+    name: str = Field(description="Local name, used if there are multiple locals", example="Local 1")
     temperature: int = Field(description="Temperature in Celcius", example=21)
     humidity: int = Field(description="Humidity in %", example=15)
     # doorState => 0 = closed, 1 = open, 2 = unknown :
@@ -21,9 +22,9 @@ class Local(BaseModel):
     info: str = Field(description="Info about the local or door", example="Le BEP vous souhaite une bonne année!")
 
     # instace attributes
-    def __init__(self, id:int) -> None:
+    def __init__(self, id:int, name:str) -> None:
         # NEEDS to call the super (BaseModel) __init__() from Pydantic to work
-        super().__init__(id=id, temperature=69, humidity=69, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=int(time.time()), info="Pas d'info")
+        super().__init__(id=id, name=name,temperature=69, humidity=69, doorState=2, doorUpdateTime="Unknown", doorUpdateTimeUnix=int(time.time()), info="Pas d'info")
 
     def updateDoorStatus(self, doorState: int = 2):
         print("Updating door status")
@@ -64,7 +65,7 @@ class Local(BaseModel):
                 print("difference: " + str(doorUpdateTimeUnix - int(time.time())) + " ms")
                 #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
                 raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
-            self.doorUpdateTime = str(HumanReadableTime(doorUpdateTimeUnix))
+            self.doorUpdateTime = HumanReadableTime(doorUpdateTimeUnix)
             self.doorUpdateTimeUnix = int(doorUpdateTimeUnix)
             print("Door updated state time updated")
             return True
@@ -110,7 +111,7 @@ class Local(BaseModel):
 
     def getUpdateTime(self) -> str:
         print("Getting update time")
-        return str(self.doorUpdateTime)
+        return self.doorUpdateTime
 
     def getUpdateTimeUnix(self) -> int:
         print("Getting update time unix")
@@ -118,7 +119,7 @@ class Local(BaseModel):
 
     def getInfo(self) -> str:
         print("Getting info")
-        return str(self.info)
+        return self.info
 
     def getTemperature(self) -> int:
         print("Getting temperature")
@@ -135,7 +136,7 @@ class Local(BaseModel):
         return self.humidity
 
 
-def HumanReadableTime(epochTime = None) -> str:
+def HumanReadableTime(epochTime: int | None = None) -> str:
     return time.strftime("%d/%m/%Y %H:%M", time.localtime(epochTime))
 
 
