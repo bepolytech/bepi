@@ -43,35 +43,47 @@ class Local(BaseModel):
         except:
             print("ERROR: Temperature and humidity update failed")
 
-    def updateDoorStateTime(self, doorUpdateTimeUnix: int = 100) -> bool:
-        print("Updating door state time")
-        #doorUpdateTimeUnix = removeOffsetEpochTime(offsetDoorUpdateTimeUnix)
+    def checkDoorUpdateTimeCorrect(self, doorUpdateTimeUnix: int = 100) -> bool:
+        print("Checking door updated state time correctness")
         try:
             if doorUpdateTimeUnix < 1:
                 print("ERROR: Impossible unix time for update time, cannot be negative")
-                #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Impossible unix time for update time, cannot be negative")
-                raise ValueError("ERROR: Impossible unix time for update time, cannot be negative")
+                # raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Impossible unix time for update time, cannot be negative")
+                raise ValueError(
+                    "ERROR: Impossible unix time for update time, cannot be negative")
             if doorUpdateTimeUnix < self.doorUpdateTimeUnix:
-                print("ERROR: Update time received incorrect, cannot be less than previous time")
+                print(
+                    "ERROR: Update time received incorrect, cannot be less than previous time")
                 print("previous time: " + str(self.doorUpdateTimeUnix))
                 print("new time: " + str(doorUpdateTimeUnix))
-                #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, cannot be less than previous time")
-                raise ValueError("ERROR: Update time received incorrect, cannotbe less than previous time")
-            if doorUpdateTimeUnix > (int(time.time()) + 120): # 2 minutes
-                print("ERROR: Update time received incorrect, too far ahead from current time")
+                # raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, cannot be less than previous time")
+                raise ValueError(
+                    "ERROR: Update time received incorrect, cannotbe less than previous time")
+            if doorUpdateTimeUnix > (int(time.time()) + 120):  # 2 minutes
+                print(
+                    "ERROR: Update time received incorrect, too far ahead from current time")
                 print("current time: " + str(int(time.time())))
                 print("new time: " + str(doorUpdateTimeUnix))
                 print("more that 2 minutes ahead")
-                print("difference: " + str(doorUpdateTimeUnix - int(time.time())) + " ms")
-                #raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
-                raise ValueError("ERROR: Update time received incorrect, too far ahead from current time")
-            self.doorUpdateTime = HumanReadableTime(doorUpdateTimeUnix)
-            self.doorUpdateTimeUnix = int(doorUpdateTimeUnix)
-            print("Door updated state time updated successfully")
+                print("difference: " +
+                      str(doorUpdateTimeUnix - int(time.time())) + " ms")
+                # raise HTTPException(status.HTTP_400_BAD_REQUEST,detail="ERROR: Update time received incorrect, too far ahead from current time")
+                raise ValueError(
+                    "ERROR: Update time received incorrect, too far ahead from current time")
+            print("Door updated state time correct")
             return True
         except:
-            print("ERROR: Door updated state time update failed")
+            print("ERROR: Door updated state time incorrect")
             return False
+
+    def updateDoorStateTime(self, doorUpdateTimeUnix: int = 100):
+        print("Updating door state time")
+        try:
+            self.doorUpdateTime = HumanReadableTime(doorUpdateTimeUnix)
+            self.doorUpdateTimeUnix = int(doorUpdateTimeUnix)
+            print("Door state time updated successfully")
+        except:
+            print("ERROR: Door state time update failed")
     
     def updateInfo(self, info: str = "Pas d'info"):
         print("Updating info")

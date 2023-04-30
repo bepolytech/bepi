@@ -226,15 +226,16 @@ def update_local(*, request: Request,
     #        print("No x-forwarded-for header found")
     #print("PUT request at /local/ from " + str(origin_ip))
     print("PUT request at /local/")
-    cond = local.updateDoorStateTime(update_time_unix)
+    cond = local.checkDoorUpdateTimeCorrect(update_time_unix)
     if cond:
+        local.updateDoorStateTime(update_time_unix)
         local.updateDoorStatus(door_state)
         local.updateTempandHum(temperature, humidity)
         print("Local update PUT request successfully processed")
         res = {"api_key": "correct", "auth": "yes", "update": "success"}
     else:
         print("Local update PUT request process failed")
-        res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail" : "unix time error"}
+        res = {"api_key": "correct", "auth": "yes", "update": "failed", "detail" : "update error, might be due to incorrect update_time_unix"}
     print("Sending response:")
     print(res)
     return res
