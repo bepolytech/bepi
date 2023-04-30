@@ -96,7 +96,7 @@ limiter = Limiter(key_func=get_remote_address, headers_enabled=False, default_li
 app = FastAPI(
     title="BEP API - BEPI",
     description=api_description,
-    version="1.4.0",
+    version="1.5.0",
     contact={
         "name": "BEP - Bureau Étudiant de Polytechnique",
         "url": "https://bepolytech.be/",
