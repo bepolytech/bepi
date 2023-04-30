@@ -43,9 +43,9 @@ class Local(BaseModel):
         except:
             print("ERROR: Temperature and humidity update failed")
 
-    def updateDoorStateTime(self, offsetDoorUpdateTimeUnix: int = 100) -> bool:
+    def updateDoorStateTime(self, doorUpdateTimeUnix: int = 100) -> bool:
         print("Updating door state time")
-        doorUpdateTimeUnix = removeOffsetEpochTime(offsetDoorUpdateTimeUnix)
+        #doorUpdateTimeUnix = removeOffsetEpochTime(offsetDoorUpdateTimeUnix)
         try:
             if doorUpdateTimeUnix < 1:
                 print("ERROR: Impossible unix time for update time, cannot be negative")
@@ -146,8 +146,8 @@ def getEpochTime() -> int:
     return epochTime
 
 
-def removeOffsetEpochTime(epochTime: int) -> int:
-    # default 1 hour, Brussels time (CET), winter time
-    offset: int =  UTC_OFFSET
-    res = epochTime - offset
-    return res
+#def removeOffsetEpochTime(epochTime: int) -> int:
+#    # default 1 hour, Brussels time (CET), winter time
+#    offset: int =  UTC_OFFSET
+#    res = epochTime - offset
+#    return res
